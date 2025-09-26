@@ -10,13 +10,13 @@ class Importer:
         return False
 
         
-    def read_log(self, file:str) -> list[list[str]]:
+    def read_log(self, file:str, records_count : Optional[int] = 1000) -> list[dict]:
         records = []
         count = 0
         with open(file, 'r') as fr:
             for line in fr.readlines():
                 count += 1
-                if count == 1000:
+                if count == records_count:
                     break
 
                 try:
