@@ -1,6 +1,5 @@
 from .base import BaseCalculator
 import re
-from collections import defaultdict
 
 class Doi(BaseCalculator):
     def endpoints_to_doi(self, records: list[dict]) -> list[dict]:
@@ -15,5 +14,13 @@ class Doi(BaseCalculator):
 
     def calculate(self, records: list[dict]) -> list[dict]:
         records = self.endpoints_to_doi(records)
-
-
+        keys = []
+        for record in records:
+            if record["endpoint"]:
+                ip_minute_endpoint_key = f"{record["ip_address"]};{record["time"]};{record["endpoint"]}"
+                keys.append(ip_minute_endpoint_key)
+        
+        results = []
+        for k in set(keys):
+            results.append({k: keys.count(k)})
+        print(results)
