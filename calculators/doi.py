@@ -25,5 +25,4 @@ class Doi(BaseCalculator):
             ip_address, *_ = k.split(';')
             results.append({ip_address: keys.count(k)})
         results = sorted(results, key=lambda d: list(d.values())[0])
-        print(results)
         return results
