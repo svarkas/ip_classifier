@@ -22,5 +22,8 @@ class Doi(BaseCalculator):
         
         results = []
         for k in set(keys):
-            results.append({k: keys.count(k)})
+            ip_address, *_ = k.split(';')
+            results.append({ip_address: keys.count(k)})
+        results = sorted(results, key=lambda d: list(d.values())[0])
         print(results)
+        return results
