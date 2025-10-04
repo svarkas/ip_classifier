@@ -11,14 +11,18 @@ class AssetRatio(BaseCalculator):
                 ip_minute_key = f"{record["ip_address"]};{record["time"]}"
                 ip_minute_keys.append(ip_minute_key)
         
-        total_requests = []
+        requests_per_key = []
         for key in ip_minute_keys:
             ip_address, *_ = key.split(';')
             count = ip_minute_keys.count(key)
-            total_requests.append({"ip_address": ip_address, "total_requests": count})
+            requests_per_key.append({"ip_address": ip_address, "total_requests": count})
         
-        return total_requests
-    
+        sum_req_per_key = Counter()
+        for rk in requests_per_key:
+            sum_req_per_key.update(rk)
+
+        return sum_req_per_key
+
     def asset_requests(self, records: list[dict]) -> list[dict]:
         ip_minute_endpoint_end_keys = []
         for record in records:
@@ -42,8 +46,10 @@ class AssetRatio(BaseCalculator):
         total_requests_indexed = {tr["ip_address"]: tr for tr in total_requests}
 
         for ar in asset_request:
-            if ar["ip_address"] in total_requests_indexed
+            if ar["ip_address"] in total_requests_indexed:
+                pass
+
     def calculate(self, records: list[dict] ) -> list[dict]:
         total_requests = self.total_requests(records)
         asset_requests = self.asset_requests(records)
-        print(asset_requests)
+        print(total_requests)
