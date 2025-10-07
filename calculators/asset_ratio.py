@@ -1,5 +1,4 @@
 from .base import BaseCalculator
-from collections import Counter
 
 class AssetRatio(BaseCalculator):
 
