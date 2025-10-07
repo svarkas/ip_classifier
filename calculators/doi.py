@@ -17,9 +17,9 @@ class Doi(BaseCalculator):
         keys = []
         for record in records:
             if record["endpoint"]:
-                ip_minute_endpoint_key = f"{record["ip_address"]};{record["time"]};{record["endpoint"]}"
+                ip_minute_endpoint_key = f"{record["ip_address"]};{record["time"][0:17]};{record["endpoint"]}"
                 keys.append(ip_minute_endpoint_key)
-        
+                print(record["time"][0:17]) 
         results = []
         for k in set(keys):
             ip_address, *_ = k.split(';')

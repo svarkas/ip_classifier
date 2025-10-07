@@ -8,7 +8,7 @@ class AssetRatio(BaseCalculator):
         ip_minute_keys = []
         for record in records:
             if record["endpoint"]:
-                ip_minute_key = f"{record["ip_address"]};{record["time"]}"
+                ip_minute_key = f"{record["ip_address"]};{record["time"][0:17]}"
                 ip_minute_keys.append(ip_minute_key)
         
         requests_per_key = []
@@ -32,7 +32,7 @@ class AssetRatio(BaseCalculator):
         ip_minute_endpoint_end_keys = []
         for record in records:
             if record["endpoint"]:
-                ip_minute_endpoint_end_key = f"{record["ip_address"]};{record["time"]};{record["endpoint"].split('.')[-1]}"
+                ip_minute_endpoint_end_key = f"{record["ip_address"]};{record["time"][0:17]};{record["endpoint"].split('.')[-1]}"
                 ip_minute_endpoint_end_keys.append(ip_minute_endpoint_end_key)
         
         ip_endpoints = [] 

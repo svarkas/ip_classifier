@@ -23,7 +23,7 @@ class Importer:
                     line_splitted = line.split(' ')
                     ip, _, _, time, _, method, endpoint, protocol, result, size, referrer, uagent, *_  = line_splitted 
                     uagent = " ".join(line_splitted[11:-1])
-                    time = time[0:18]
+                    time = time[0:21].strip('[]')
                     if not self.is_bot(uagent): 
                         records.append({
                             "ip_address":ip,
