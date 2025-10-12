@@ -55,6 +55,9 @@ class AssetRatio(BaseCalculator):
         return [(ip, total_requests.get(ip), asset_request.get(ip)) for ip in total_requests | asset_request]
 
     def calculate(self, records: list[dict] ) -> list[dict]:
+        '''
+        TODO: the actual asset ratio calculation
+        '''
         total_requests = self.total_requests(records)
         asset_requests = self.asset_requests(records)
         print(self.join_data_by_ip(total_requests, asset_requests))
