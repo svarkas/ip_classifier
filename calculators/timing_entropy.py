@@ -2,6 +2,8 @@ from .base import BaseCalculator
 import pandas as pd
 import sys
 from typing import Optional
+import numpy as np
+import numpy.typing as npt
 
 class TimingEntropy(BaseCalculator):
 
@@ -39,6 +41,16 @@ class TimingEntropy(BaseCalculator):
             ip_prob[ip] = probs
         return ip_prob
 
+    def shannon_entropy(self, probabilities: dict) -> dict:
+        shannon_entropies = {}
+        for ip, probs in probabilities.items():
+            if probs:
+                sums = 0
+                for p in probs:
+                    sums += p*np.log2(p)
+                shannon_entropies[ip] = sums*(-1)
+        return shannon_entropies
+
     def calculate(self, records: list[dict]) -> None:
         records_df = pd.DataFrame(records) 
         records_df["time"] = pd.to_datetime(records_df["time"], format='%d/%b/%Y:%H:%M:%S.%f' )
@@ -46,4 +58,5 @@ class TimingEntropy(BaseCalculator):
         records_df = records_df.sort_values(["ip_address", "time"])
         records_grouped = records_df.groupby("ip_address")
         deltas = self.calculate_deltas(records_grouped)
-        print(self.calculate_probabilities(deltas))
+        probabilities = self.calculate_probabilities(deltas)
+        print(self.shannon_entropy(probabilities))
