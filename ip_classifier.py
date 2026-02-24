@@ -16,7 +16,15 @@ def compine_features(doi_variance: dict, assets_ratio: dict, time_entropy) -> pd
             assets_ratio.get(ip, 0),
             time_entropy.get(ip, 0)
         }
-    features_df = pd.DataFrame.from_dict(features , orient="index")
+    features_df = pd.DataFrame.from_dict(
+        features,
+        orient="index", 
+        columns=[
+            "Doi Variance",
+            "Assets Ratio",
+            "Time entropy"
+        ]
+    )
     features_df.reset_index(inplace = True)
     features_df.rename(columns={"index": "ip"}, inplace = True)
     return features_df

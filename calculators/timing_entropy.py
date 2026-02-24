@@ -47,6 +47,7 @@ class TimingEntropy(BaseCalculator):
             probs = np.array(probs)
             probs = probs[probs >0]
             shannon_entropies[ip] = -np.sum(probs * np.log2(probs))
+        # correct but lets use the above numpy approach
         #for ip, probs in probabilities.items():
         #    if probs:
         #        sums = 0
