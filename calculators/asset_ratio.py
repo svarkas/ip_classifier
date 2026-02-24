@@ -52,12 +52,21 @@ class AssetRatio(BaseCalculator):
         return asset_requests
 
     def join_data_by_ip(self, total_requests: dict, asset_request: dict)-> list[tuple[str, int, int]]:
-        return [(ip, total_requests.get(ip), asset_request.get(ip)) for ip in total_requests | asset_request]
+        # union ip address with total requests and asset_requests, if no value return 0 instead of None
+        return [(ip, total_requests.get(ip, 0), asset_request.get(ip, 0)) for ip in total_requests | asset_request]
 
-    def calculate(self, records: list[dict] ) -> list[dict]:
-        '''
-        TODO: the actual asset ratio calculation
-        '''
+    def calculate_asset_ratio(self, ip_totalr_assetr: list) -> dict:
+        # create a dictionary, use ip as key and the fraction assets/total as value,
+        # if total=0 value-ratio = -1
+        ip_ratio = {}
+        for record in ip_totalr_assetr:
+            if record[1] > 0:
+                ip_ratio[record[0]] = record[2]/record[1]
+            else:
+                ip_ratio[record[0]] = -1
+        return ip_ratio
+
+    def calculate(self, records: list[dict] ) -> dict:
         total_requests = self.total_requests(records)
         asset_requests = self.asset_requests(records)
-        print(self.join_data_by_ip(total_requests, asset_requests))
+        return self.calculate_asset_ratio(self.join_data_by_ip(total_requests, asset_requests))

@@ -44,13 +44,19 @@ class TimingEntropy(BaseCalculator):
     def shannon_entropy(self, probabilities: dict) -> dict:
         shannon_entropies = {}
         for ip, probs in probabilities.items():
-            if probs:
-                sums = 0
-                for p in probs:
-                    sums += p*np.log2(p)
-                shannon_entropies[ip] = sums*(-1)
+            probs = np.array(probs)
+            probs = probs[probs >0]
+            shannon_entropies[ip] = -np.sum(probs * np.log2(probs))
+        #for ip, probs in probabilities.items():
+        #    if probs:
+        #        sums = 0
+        #        for p in probs:
+        #            if p > 0:
+        #                sums += p*np.log2(p)
+        #        shannon_entropies[ip] = -sums
         return shannon_entropies
 
+    # when deltas very irregular probably human, when deltas very regular probably bot
     def calculate(self, records: list[dict]) -> None:
         records_df = pd.DataFrame(records) 
         records_df["time"] = pd.to_datetime(records_df["time"], format='%d/%b/%Y:%H:%M:%S.%f' )
@@ -59,4 +65,4 @@ class TimingEntropy(BaseCalculator):
         records_grouped = records_df.groupby("ip_address")
         deltas = self.calculate_deltas(records_grouped)
         probabilities = self.calculate_probabilities(deltas)
-        print(self.shannon_entropy(probabilities))
+        return self.shannon_entropy(probabilities)

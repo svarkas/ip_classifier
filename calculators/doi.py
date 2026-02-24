@@ -11,17 +11,17 @@ class Doi(BaseCalculator):
             else:
                 record["endpoint"] = None
         return records
-
-    def calculate(self, records: list[dict]) -> list[dict]:
+    
+    # how many dois were requested from a specific ip per second
+    def calculate(self, records: list[dict]) -> dict:
         records = self.endpoints_to_doi(records)
         keys = []
         for record in records:
             if record["endpoint"]:
                 ip_minute_endpoint_key = f"{record["ip_address"]};{record["time"][0:17]};{record["endpoint"]}"
                 keys.append(ip_minute_endpoint_key)
-        results = []
+        ip_count = {} 
         for k in set(keys):
             ip_address, *_ = k.split(';')
-            results.append({ip_address: keys.count(k)})
-        results = sorted(results, key=lambda d: list(d.values())[0])
-        return results
+            ip_count[ip_address] = keys.count(k)
+        return ip_count 
