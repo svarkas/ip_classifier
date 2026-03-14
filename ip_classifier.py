@@ -6,28 +6,33 @@ from calculators.asset_ratio import AssetRatio
 from calculators.timing_entropy import TimingEntropy
 from copy import deepcopy
 import pandas as pd 
+from libs.rt_tree import RTtree
 
-def compine_features(doi_variance: dict, assets_ratio: dict, time_entropy) -> pd.DataFrame:
-    features = {}
-    all_ips = set(doi_variance) | set(assets_ratio) | set(time_entropy)
-    for ip in all_ips:
-        features[ip] = {
-            doi_variance.get(ip, 0),
-            assets_ratio.get(ip, 0),
-            time_entropy.get(ip, 0)
-        }
-    features_df = pd.DataFrame.from_dict(
-        features,
-        orient="index", 
-        columns=[
-            "Doi Variance",
-            "Assets Ratio",
-            "Time entropy"
-        ]
-    )
-    features_df.reset_index(inplace = True)
-    features_df.rename(columns={"index": "ip"}, inplace = True)
-    return features_df
+def compine_features(doi_variance: dict, assets_ratio: dict, time_entropy: dict) -> pd.DataFrame:
+    features_df = pd.DataFrame({
+        "doi_variance": doi_variance,
+        "assets_ratio": assets_ratio,
+        "time_entropy": time_entropy
+    })
+    features_df = features_df.reset_index()
+    features_df.rename(columns={"index": "ip"}, inplace=True)
+    features_df.fillna(0, inplace = True)
+    print(len(features_df)) 
+    # Return only the records where all futures are > 0
+    filtered = features_df[(features_df[["doi_variance", "assets_ratio", "time_entropy"]]>0).all(axis=1)]
+    print(len(filtered)) 
+    return filtered
+
+def predict(node, features):
+    if node.label is not None:
+        return node.label
+
+    value = features[node.feature]
+
+    if value <= node.threshold:
+        return predict(node.left, features)
+    else:
+        return predict(node.right, features)
 
 def main(argv):
     importer = Importer()
@@ -38,7 +43,14 @@ def main(argv):
     assets_ratio = arc.calculate(deepcopy(records))
     tec = TimingEntropy()
     time_entropy = tec.calculate(deepcopy(records))
-    print(compine_features(doi_variance, assets_ratio, time_entropy))
+    features_df = compine_features(doi_variance, assets_ratio, time_entropy)
+    pd.set_option("display.max_rows", None)
+    pd.set_option("display.max_columns", None)
+  
+    rt = RTtree()
+    tree = rt.rt_tree()
+    for ip, feat in features_df.iterrows():
+        print(feat["ip"], predict(tree, feat))
 
 if __name__ == "__main__":
     main(sys.argv)
