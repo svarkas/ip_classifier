@@ -49,7 +49,7 @@ def main(argv):
   
     rt = RTtree()
     tree = rt.rt_tree()
-    for ip, feat in features_df.iterrows():
+    for index, feat in features_df.iterrows():
         print(feat["ip"], predict(tree, feat))
 
 if __name__ == "__main__":
