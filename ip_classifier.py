@@ -74,8 +74,8 @@ def sample(records: list[dict], count: int, max: int) -> list[dict]:
 
 def main(argv):
     importer = Importer()
-    records = importer.read_log(argv[1], 1000)
-    records = sample(deepcopy(records), 100, 1000)
+    records = importer.read_log(argv[1], 100000)
+    records = sample(deepcopy(records), 1000, 1000)
     geolocate_records_out(records)
     exit()
 
